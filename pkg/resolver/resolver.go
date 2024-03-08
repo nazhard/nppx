@@ -3,7 +3,9 @@ package resolver
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 )
 
 type Dist struct {
@@ -25,6 +27,13 @@ type Pkg struct {
 	} `json:"dist-tags"`
 }
 
+var (
+	Name        string
+	Version     string
+	Description string
+	Tarball     string
+)
+
 func LatestVersion(name string) {
 	data, err := fetchData(name)
 	if err != nil {
@@ -37,12 +46,32 @@ func LatestVersion(name string) {
 	vInfo, exists := data.Versions[lVersion]
 
 	if exists {
-		pName := vInfo.Name
-		pVersion := vInfo.Version
-
-		fmt.Printf("Latest Version: %s, Name: %s\n", pVersion, pName)
+		Name = vInfo.Name
+		Version = vInfo.Version
+		Description = data.Description
+		Tarball = vInfo.Dist.Tarball
 	} else {
 		fmt.Println("Latest version not found")
+	}
+}
+
+func Get(name, url string) {
+	res, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer res.Body.Close()
+
+	file, err := os.Create(name)
+	if err != nil {
+		fmt.Println("Error creating file...")
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, res.Body)
+	if err != nil {
+		fmt.Println("Error copying content to file:", err)
+		return
 	}
 }
 

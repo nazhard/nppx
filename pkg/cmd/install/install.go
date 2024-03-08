@@ -1,9 +1,11 @@
 package install
 
 import (
-	"fmt"
+	"github.com/nazhard/nppx/pkg/resolver"
 )
 
 func Install(args string) {
-	fmt.Println("Installed " + args)
+	resolver.LatestVersion(args)
+
+	resolver.Get(args+".tar.xz", resolver.Tarball)
 }
