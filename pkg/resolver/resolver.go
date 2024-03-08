@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 )
 
 type Dist struct {
@@ -34,7 +35,11 @@ var (
 	Tarball     string
 )
 
-func LatestVersion(name string) {
+var client = &http.Client{
+	Timeout: 3 * time.Second,
+}
+
+func GetLatestVersion(name string) {
 	data, err := fetchData(name)
 	if err != nil {
 		fmt.Println("Error fetching data:", err)
@@ -56,7 +61,7 @@ func LatestVersion(name string) {
 }
 
 func Get(name, url string) {
-	res, err := http.Get(url)
+	res, err := client.Get(url)
 	if err != nil {
 		fmt.Println(err)
 	}
