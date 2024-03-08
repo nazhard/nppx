@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/nazhard/nppx/pkg/cmd/install"
+	"github.com/nazhard/nppx/pkg/resolver"
 	//"github.com/nazhard/nppx/pkg/cmd/list"
 	"github.com/urfave/cli/v2"
 )
@@ -16,6 +17,8 @@ func Commands() []*cli.Command {
 			Usage:   "install global packages",
 			Action: func(c *cli.Context) error {
 				install.Install(c.Args().Get(0))
+
+				resolver.LatestVersion()
 
 				return nil
 			},

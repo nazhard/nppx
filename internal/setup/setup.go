@@ -6,9 +6,10 @@ import (
 )
 
 var (
-	PATH      = os.Getenv("NPPX_HOME")
-	NPPX_PATH = PATH + "/node_modules/.nppx"
-	BIN_PATH  = PATH + "/bin"
+	PATH       = os.Getenv("NPPX_HOME")
+	NPPX_PATH  = PATH + "/.nppx"
+	CACHE_PATH = NPPX_PATH + "/.cache"
+	BIN_PATH   = PATH + "/bin"
 )
 
 func InitFunc() bool {
@@ -38,5 +39,15 @@ func nppxInit() {
 		fmt.Println("Adding nppx files...")
 		a, _ := os.Create(NPPX_PATH + "/.modules.toml")
 		defer a.Close()
+
+		_, err = os.Stat(CACHE_PATH)
+		if os.IsNotExist(err) {
+			_ = os.MkdirAll(CACHE_PATH, os.ModePerm)
+		}
+	}
+
+	_, err = os.Stat(BIN_PATH)
+	if os.IsNotExist(err) {
+		_ = os.MkdirAll(BIN_PATH, os.ModePerm)
 	}
 }
