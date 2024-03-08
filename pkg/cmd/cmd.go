@@ -18,7 +18,7 @@ func Commands() []*cli.Command {
 			Action: func(c *cli.Context) error {
 				install.Install(c.Args().Get(0))
 
-				resolver.LatestVersion()
+				resolver.LatestVersion(c.Args().Get(0))
 
 				return nil
 			},

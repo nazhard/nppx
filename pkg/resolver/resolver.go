@@ -6,9 +6,14 @@ import (
 	"net/http"
 )
 
+type Dist struct {
+	Tarball string `json:"tarball"`
+}
+
 type VersionInfo struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
+	Dist    Dist   `json:"dist"`
 }
 
 type Pkg struct {
@@ -20,31 +25,31 @@ type Pkg struct {
 	} `json:"dist-tags"`
 }
 
-func LatestVersion() {
-	data, err := fetchData()
+func LatestVersion(name string) {
+	data, err := fetchData(name)
 	if err != nil {
 		fmt.Println("Error fetching data:", err)
-		return
 	}
 
-	fmt.Printf("Latest Version: %s, Name: %s\n", data.DistTags.Latest, data.Name)
-}
+	var vInfo VersionInfo
 
-func AllVersion() {
-	data, err := fetchData()
-	if err != nil {
-		fmt.Println("Error fetching data:", err)
-		return
-	}
+	lVersion := data.DistTags.Latest
+	vInfo, exists := data.Versions[lVersion]
 
-	fmt.Println("Versions:")
-	for version, info := range data.Versions {
-		fmt.Printf("  Version: %s, Name: %s\n", version, info.Name)
+	if exists {
+		pName := vInfo.Name
+		pVersion := vInfo.Version
+
+		fmt.Printf("Latest Version: %s, Name: %s\n", pVersion, pName)
+	} else {
+		fmt.Println("Latest version not found")
 	}
 }
 
-func fetchData() (*Pkg, error) {
-	url := "https://registry.npmjs.org/express"
+func fetchData(module string) (*Pkg, error) {
+	url := "https://registry.npmjs.org/" + module
+
+	var data Pkg
 
 	response, err := http.Get(url)
 	if err != nil {
@@ -52,7 +57,6 @@ func fetchData() (*Pkg, error) {
 	}
 	defer response.Body.Close()
 
-	var data Pkg
 	err = json.NewDecoder(response.Body).Decode(&data)
 	if err != nil {
 		return nil, err
