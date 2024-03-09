@@ -20,19 +20,15 @@ type VersionInfo struct {
 }
 
 type Pkg struct {
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Versions    map[string]VersionInfo `json:"versions"`
-	DistTags    struct {
+	DistTags struct {
 		Latest string `json:"latest"`
 	} `json:"dist-tags"`
 }
 
 var (
-	Name        string
-	Version     string
-	Description string
-	Tarball     string
+	Name    string
+	Version string
+	Tarball string
 )
 
 var client = &http.Client{
@@ -40,24 +36,19 @@ var client = &http.Client{
 }
 
 func GetLatestVersion(name string) {
-	data, err := fetchData(name)
+	resp, err := fetchLatestVersion(name)
 	if err != nil {
 		fmt.Println("Error fetching data:", err)
 	}
 
-	var vInfo VersionInfo
-
-	lVersion := data.DistTags.Latest
-	vInfo, exists := data.Versions[lVersion]
-
-	if exists {
-		Name = vInfo.Name
-		Version = vInfo.Version
-		Description = data.Description
-		Tarball = vInfo.Dist.Tarball
-	} else {
-		fmt.Println("Latest version not found")
+	data, err := fetchData(name, resp.DistTags.Latest)
+	if err != nil {
+		fmt.Println("Error fetching data:", err)
 	}
+
+	Name = data.Name
+	Version = data.Version
+	Tarball = data.Dist.Tarball
 }
 
 func Get(name, url string) {
@@ -80,18 +71,37 @@ func Get(name, url string) {
 	}
 }
 
-func fetchData(module string) (*Pkg, error) {
-	url := "https://registry.npmjs.org/" + module
-
+func fetchLatestVersion(name string) (*Pkg, error) {
 	var data Pkg
 
-	response, err := http.Get(url)
+	url := "https://registry.npmjs.org/" + name
+
+	res, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	defer res.Body.Close()
 
-	err = json.NewDecoder(response.Body).Decode(&data)
+	err = json.NewDecoder(res.Body).Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func fetchData(name, v string) (*VersionInfo, error) {
+	var data VersionInfo
+
+	url := "https://registry.npmjs.org/" + name + "/" + v
+
+	res, err := client.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	err = json.NewDecoder(res.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}

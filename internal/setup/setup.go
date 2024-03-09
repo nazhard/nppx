@@ -3,6 +3,7 @@ package setup
 import (
 	"fmt"
 	"os"
+	"sync"
 )
 
 var (
@@ -15,7 +16,10 @@ var (
 func InitFunc() bool {
 	_, err := os.Stat(NPPX_PATH)
 	if os.IsNotExist(err) {
+		_ = os.MkdirAll(NPPX_PATH, os.ModePerm)
+
 		runner()
+
 		return false
 	}
 	return true
@@ -31,23 +35,49 @@ func runner() {
 }
 
 func nppxInit() {
-	_, err := os.Stat(NPPX_PATH)
-	if os.IsNotExist(err) {
-		fmt.Println("Adding nppx path...")
-		_ = os.MkdirAll(NPPX_PATH, os.ModePerm)
+	dirNames := []string{BIN_PATH, CACHE_PATH}
 
-		fmt.Println("Adding nppx files...")
-		a, _ := os.Create(NPPX_PATH + "/.modules.toml")
-		defer a.Close()
+	xv := NPPX_PATH + "/.modules.toml"
+	fileNames := []string{xv}
 
-		_, err = os.Stat(CACHE_PATH)
-		if os.IsNotExist(err) {
-			_ = os.MkdirAll(CACHE_PATH, os.ModePerm)
-		}
+	var wg sync.WaitGroup
+
+	for _, dirName := range dirNames {
+		wg.Add(1)
+		go createDirectory(dirName, &wg)
 	}
 
-	_, err = os.Stat(BIN_PATH)
-	if os.IsNotExist(err) {
-		_ = os.MkdirAll(BIN_PATH, os.ModePerm)
+	for _, fileName := range fileNames {
+		wg.Add(1)
+		go createFile(fileName, &wg)
 	}
+
+	wg.Wait()
+
+	fmt.Println("All files and directories created successfully!")
+}
+
+func createFile(fileName string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	file, err := os.Create(fileName)
+	if err != nil {
+		fmt.Printf("Error creating file %s: %v\n", fileName, err)
+		return
+	}
+	defer file.Close()
+
+	fmt.Printf("File %s created successfully!\n", fileName)
+}
+
+func createDirectory(dirName string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	err := os.MkdirAll(dirName, os.ModePerm)
+	if err != nil {
+		fmt.Printf("Error creating directory %s: %v\n", dirName, err)
+		return
+	}
+
+	fmt.Printf("Directory %s created successfully!\n", dirName)
 }
