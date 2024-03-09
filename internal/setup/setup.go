@@ -3,20 +3,22 @@ package setup
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"sync"
 )
 
 var (
 	PATH       = os.Getenv("NPPX_HOME")
-	NPPX_PATH  = PATH + "/.nppx"
-	CACHE_PATH = NPPX_PATH + "/.cache"
-	BIN_PATH   = PATH + "/bin"
+	NPPX_PATH  = filepath.Join(PATH, ".nppx")
+	CACHE_PATH = filepath.Join(NPPX_PATH, ".cache")
+	BIN_PATH   = filepath.Join(PATH, "bin")
 )
 
 func InitFunc() bool {
 	_, err := os.Stat(NPPX_PATH)
 	if os.IsNotExist(err) {
 		_ = os.MkdirAll(NPPX_PATH, os.ModePerm)
+		writeModule()
 
 		runner()
 
@@ -37,7 +39,7 @@ func runner() {
 func nppxInit() {
 	dirNames := []string{BIN_PATH, CACHE_PATH}
 
-	xv := NPPX_PATH + "/.modules.toml"
+	xv := filepath.Join(NPPX_PATH, ".modules.toml")
 	fileNames := []string{xv}
 
 	var wg sync.WaitGroup
@@ -80,4 +82,16 @@ func createDirectory(dirName string, wg *sync.WaitGroup) {
 	}
 
 	fmt.Printf("Directory %s created successfully!\n", dirName)
+}
+
+func writeModule() {
+	path := filepath.Join(NPPX_PATH, ".modules.toml")
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	file.WriteString("[modules]\n")
 }
