@@ -1,15 +1,24 @@
 package install
 
 import (
+	"fmt"
 	"os"
 	"sync"
 
 	"github.com/nazhard/nppx/internal/setup"
 	"github.com/nazhard/nppx/pkg/resolver"
+	"github.com/nazhard/nppx/pkg/utils"
 )
 
 func Install(args []string) {
 	var wg sync.WaitGroup
+
+	if len(args) == 0 {
+		err := utils.NoPackageJson()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 
 	for _, arg := range args {
 		wg.Add(1)
