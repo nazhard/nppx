@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/nazhard/nppx/pkg/cmd/install"
+	"github.com/nazhard/nppx/pkg/cmd/list"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,7 +13,7 @@ func Commands() []*cli.Command {
 			Aliases: []string{"i"},
 			Usage:   "install global packages",
 			Action: func(c *cli.Context) error {
-				install.Install(c.Args().Get(0))
+				install.Install(c.Args().Slice())
 
 				return nil
 			},
@@ -25,8 +24,7 @@ func Commands() []*cli.Command {
 			Usage:     "list installed packages",
 			UsageText: "nppx list, nppx ls",
 			Action: func(c *cli.Context) error {
-				fmt.Println("You have no packages")
-				// list.Print()
+				list.Print(c.Args().Slice())
 
 				return nil
 			},
