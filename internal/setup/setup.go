@@ -18,9 +18,10 @@ func InitFunc() bool {
 	_, err := os.Stat(NPPX_PATH)
 	if os.IsNotExist(err) {
 		_ = os.MkdirAll(NPPX_PATH, os.ModePerm)
-		writeModule()
 
 		runner()
+
+		//writeModule()
 
 		return false
 	}
@@ -39,7 +40,7 @@ func runner() {
 func nppxInit() {
 	dirNames := []string{BIN_PATH, CACHE_PATH}
 
-	xv := filepath.Join(NPPX_PATH, ".modules.toml")
+	xv := filepath.Join(NPPX_PATH, ".modules.txt")
 	fileNames := []string{xv}
 
 	var wg sync.WaitGroup
@@ -84,6 +85,7 @@ func createDirectory(dirName string, wg *sync.WaitGroup) {
 	fmt.Printf("Directory %s created successfully!\n", dirName)
 }
 
+/*
 func writeModule() {
 	path := filepath.Join(NPPX_PATH, ".modules.toml")
 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
@@ -95,3 +97,4 @@ func writeModule() {
 
 	file.WriteString("[modules]\n")
 }
+*/

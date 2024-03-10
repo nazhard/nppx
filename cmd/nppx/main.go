@@ -19,10 +19,12 @@ func main() {
 
 func exec() {
 	app := &cli.App{
-		Name:     "nppx",
-		Version:  "v0.0.0-test",
-		Usage:    "an tool to manage javascript packages",
-		Commands: cmd.Commands(),
+		Name:            "nppx",
+		Version:         "v0.0.0-test",
+		Usage:           "an tool to manage javascript packages",
+		Commands:        cmd.Commands(),
+		HideHelpCommand: true,
+		Suggest:         true,
 	}
 
 	err := app.Run(os.Args)

@@ -6,23 +6,23 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/nazhard/nppx"
 	"github.com/nazhard/nppx/internal/setup"
 	"github.com/nazhard/nppx/pkg/resolver"
-	"github.com/nazhard/nppx/pkg/utils"
 )
 
-func Install(args []string) {
-	if len(args) == 0 {
-		err := utils.NoPackageJson()
-		if err != nil {
-			fmt.Println(err)
-		}
+func Install(args []string, useDev bool) {
+	err := nppx.NoPackageJson()
+	if err != nil {
+		fmt.Println(err)
+	}
 
+	if len(args) == 0 {
 		// modules.Search()
 	}
 
 	if len(args) != 0 {
-		dl(args)
+		dl(args, useDev)
 
 		/*
 			m := modules.SearchArgs(args)
@@ -35,15 +35,8 @@ func Install(args []string) {
 	}
 }
 
-func dl(args []string) {
+func dl(args []string, useDev bool) {
 	var wg sync.WaitGroup
-	filePath := filepath.Join(setup.NPPX_PATH, ".modules.toml")
-	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
 
 	for _, arg := range args {
 		wg.Add(1)
@@ -55,15 +48,20 @@ func dl(args []string) {
 			v := resolver.Version
 
 			module_path := filepath.Join(setup.CACHE_PATH, a, v)
-			fileName := module_path + "/" + a + "-" + v + ".tgz"
+			//fileName := module_path + "/" + a + "-" + v + ".tgz"
 
 			_ = os.MkdirAll(module_path, os.ModePerm)
-			resolver.Get(fileName, resolver.Tarball)
+			//nppx.Get(fileName, resolver.Tarball)
 
-			_, err := file.WriteString(fmt.Sprintf("%s = \"v%s\"\n", a, v))
-			if err != nil {
-				fmt.Println("Error writing to file:", err)
-				return
+			nppx.WriteToDotModules(fmt.Sprintf("%s_%s", a, v))
+
+			l := nppx.ReadDotModules(a)
+			fmt.Println(l)
+
+			if useDev == true {
+				resolver.WriteDevDeps(a, v)
+			} else {
+				resolver.WriteDeps(a, v)
 			}
 		}(arg)
 	}
