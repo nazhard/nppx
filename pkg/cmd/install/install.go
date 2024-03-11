@@ -10,12 +10,30 @@ import (
 	"github.com/nazhard/nppx"
 	"github.com/nazhard/nppx/internal/setup"
 	"github.com/nazhard/nppx/pkg/resolver"
+	"github.com/urfave/cli/v2"
 )
 
-func Install(args []string, useDev bool) {
+func Action(c *cli.Context) error {
+	if c.Bool("D") == true {
+		install(c.Args().Slice(), true)
+	} else {
+		install(c.Args().Slice(), false)
+	}
+	return nil
+}
+
+func install(args []string, useDev bool) {
 	err := nppx.NoPackageJson()
 	if err != nil {
 		fmt.Println(err)
+	}
+
+	if err == nil {
+		_, err := os.Stat(".nppx")
+		if os.IsNotExist(err) {
+			_ = os.Mkdir(".nppx", os.ModePerm)
+			setup.DotNPPX()
+		}
 	}
 
 	if len(args) == 0 {

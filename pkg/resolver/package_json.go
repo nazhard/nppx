@@ -4,15 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-)
 
-type PackageJSON struct {
-	Name            string            `json:"name"`
-	Version         string            `json:"version"`
-	Description     string            `json:"description"`
-	Dependencies    map[string]string `json:"dependencies"`
-	DevDependencies map[string]string `json:"devDependencies"`
-}
+	"github.com/nazhard/nppx/pkg/cmd/initial"
+)
 
 func WriteDeps(newDeps, newDepsVersion string) {
 	fileName := "package.json"
@@ -22,7 +16,7 @@ func WriteDeps(newDeps, newDepsVersion string) {
 		return
 	}
 
-	var pkgJson PackageJSON
+	var pkgJson initial.Pkg
 	err = json.Unmarshal(existingData, &pkgJson)
 	if err != nil {
 		fmt.Println("Error unmarshaling JSON:", err)
@@ -60,7 +54,7 @@ func WriteDevDeps(newDeps, newDepsVersion string) {
 		return
 	}
 
-	var pkgJson PackageJSON
+	var pkgJson initial.Pkg
 	err = json.Unmarshal(existingData, &pkgJson)
 	if err != nil {
 		fmt.Println("Error unmarshaling JSON:", err)

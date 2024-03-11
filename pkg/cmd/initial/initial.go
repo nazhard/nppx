@@ -10,14 +10,16 @@ import (
 )
 
 type Pkg struct {
-	Name        string            `json:"name"`
-	Version     string            `json:"version"`
-	Description string            `json:"description"`
-	Main        string            `json:"main"`
-	Scripts     map[string]string `json:"scripts"`
-	Keywords    []string          `json:"keywords"`
-	Author      string            `json:"author"`
-	License     string            `json:"license"`
+	Name            string            `json:"name"`
+	Version         string            `json:"version"`
+	Description     string            `json:"description,omitempty"`
+	Main            string            `json:"main,omitempty"`
+	Scripts         map[string]string `json:"scripts"`
+	Dependencies    map[string]string `json:"dependencies"`
+	DevDependencies map[string]string `json:"devDependencies"`
+	Keywords        []string          `json:"keywords,omitempty"`
+	Author          string            `json:"author,omitempty"`
+	License         string            `json:"license,omitempty"`
 }
 
 func Action(c *cli.Context) error {
@@ -44,8 +46,10 @@ func InitPackageJson() {
 		Scripts: map[string]string{
 			"test": "echo \"test\"",
 		},
-		Author:  "",
-		License: "ISC",
+		Dependencies:    map[string]string{},
+		DevDependencies: map[string]string{},
+		Author:          "",
+		License:         "ISC",
 	}
 
 	data, err := json.MarshalIndent(pkg, "", "  ")
