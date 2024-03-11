@@ -9,6 +9,10 @@ import (
 func Commands() []*cli.Command {
 	cmds := []*cli.Command{
 		{
+			Name:  "init",
+			Usage: "initialize simple project",
+		},
+		{
 			Name:    "install",
 			Aliases: []string{"i"},
 			Usage:   "install global packages",
@@ -18,14 +22,7 @@ func Commands() []*cli.Command {
 					Usage: "write to devDependencies",
 				},
 			},
-			Action: func(c *cli.Context) error {
-				if c.Bool("D") == true {
-					install.Install(c.Args().Slice(), true)
-				} else {
-					install.Install(c.Args().Slice(), false)
-				}
-				return nil
-			},
+			Action: installAction,
 		},
 		{
 			Name:      "list",
@@ -47,4 +44,13 @@ func Commands() []*cli.Command {
 	}
 
 	return cmds
+}
+
+func installAction(c *cli.Context) error {
+	if c.Bool("D") == true {
+		install.Install(c.Args().Slice(), true)
+	} else {
+		install.Install(c.Args().Slice(), false)
+	}
+	return nil
 }
