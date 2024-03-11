@@ -1,3 +1,12 @@
+<div align=center>
+
+# NPPX
+###### Cutest JavaScript Packages Manager
+
+</div>
+
+---
+
 Experimental Nazhard's cute personal javascript package manager
 
 Written in Go and Anime's Love
