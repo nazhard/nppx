@@ -93,7 +93,7 @@ func CreateSymlinks(jsonFile string) error {
 			return fmt.Errorf("Target path %s does not exist", target)
 		}
 
-		err := os.Symlink(setup.CACHE_PATH+target, symlink)
+		err := os.Symlink(setup.CACHE_PATH+target, ".nppx/modules/"+symlink)
 		if err != nil {
 			return err
 		}
@@ -104,10 +104,53 @@ func CreateSymlinks(jsonFile string) error {
 	return nil
 }
 
-//func main() {
-//	jsonFile := "sym.json"
-//	err := createSymlinks(jsonFile)
-//	if err != nil {
-//		fmt.Println("Error:", err)
-//	}
-//}
+func WriteToModulesJson(c, cc string) {
+	filePath := ".nppx/.modules.json"
+
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+		return
+	}
+
+	var existingData map[string]interface{}
+	err = json.Unmarshal(content, &existingData)
+	if err != nil {
+		fmt.Println("Error unmarshaling existing content:", err)
+		return
+	}
+
+	existingData[c] = "/" + c + "/" + cc
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(existingData)
+	if err != nil {
+		fmt.Println("Error encoding and writing to file:", err)
+		return
+	}
+}
+
+func WriteEmptyJSON() {
+	data := make(map[string]interface{})
+
+	file, err := os.Create(".nppx/.modules.json")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(data)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+}

@@ -33,6 +33,8 @@ func install(args []string, useDev bool) {
 		if os.IsNotExist(err) {
 			_ = os.Mkdir(".nppx", os.ModePerm)
 			setup.DotNPPX()
+
+			nppx.WriteEmptyJSON()
 		}
 	}
 
@@ -51,6 +53,11 @@ func install(args []string, useDev bool) {
 
 			dd()
 		*/
+	}
+
+	err = nppx.CreateSymlinks(".nppx/.modules.json")
+	if err != nil {
+		fmt.Println("Error:", err)
 	}
 }
 
@@ -79,15 +86,15 @@ func dl(args []string, useDev bool) {
 			v := resolver.Version
 
 			module_path := filepath.Join(setup.CACHE_PATH, a, v)
-			//fileName := module_path + "/" + a + "-" + v + ".tgz"
+			fileName := module_path + "/" + a + "-" + v + ".tgz"
 
 			_ = os.MkdirAll(module_path, os.ModePerm)
-			//nppx.Get(fileName, resolver.Tarball)
+			nppx.Get(fileName, resolver.Tarball)
 
 			nppx.WriteToDotModules(fmt.Sprintf("%s_%s", a, v))
 
-			l := nppx.ReadDotModules(a)
-			fmt.Println(l)
+			_ = nppx.ReadDotModules(a)
+			nppx.WriteToModulesJson(a, v)
 
 			if useDev == true {
 				resolver.WriteDevDeps(a, v)
