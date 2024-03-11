@@ -29,8 +29,8 @@ var client = &http.Client{
 	Timeout: 5 * time.Second,
 }
 
-func GetInfo(name string) {
-	data, err := fetchData(name, "latest")
+func GetInfo(name, v string) {
+	data, err := fetchData(name, v)
 	if err != nil {
 		fmt.Println("Error fetching data")
 	}

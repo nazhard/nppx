@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/nazhard/nppx"
@@ -43,7 +44,19 @@ func dl(args []string, useDev bool) {
 		go func(a string) {
 			defer wg.Done()
 
-			resolver.GetInfo(a)
+			if strings.Contains(a, "@") && !strings.Contains(a, "/") {
+				p := strings.Split(a, "@")
+				if len(p) == 2 {
+					name := p[0]
+					version := p[1]
+					resolver.GetInfo(name, version)
+					fmt.Println("version: " + name + version)
+				} else {
+					fmt.Println("Invalid format")
+				}
+			} else {
+				resolver.GetInfo(a, "latest")
+			}
 
 			v := resolver.Version
 
