@@ -15,3 +15,13 @@ func NoPackageJson() error {
 
 	return nil
 }
+
+func CurrentDirNotEmpty() error {
+	dirEntries, _ := os.ReadDir(".")
+
+	if len(dirEntries) > 0 {
+		return errors.New("Current working directory is not empty.")
+	}
+
+	return nil
+}

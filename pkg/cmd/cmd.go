@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/nazhard/nppx/pkg/cmd/initial"
 	"github.com/nazhard/nppx/pkg/cmd/install"
 	"github.com/nazhard/nppx/pkg/cmd/list"
 	"github.com/urfave/cli/v2"
@@ -9,8 +10,9 @@ import (
 func Commands() []*cli.Command {
 	cmds := []*cli.Command{
 		{
-			Name:  "init",
-			Usage: "initialize simple project",
+			Name:   "init",
+			Usage:  "initialize simple project",
+			Action: initial.Action,
 		},
 		{
 			Name:    "install",

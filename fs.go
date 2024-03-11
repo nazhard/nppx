@@ -2,6 +2,7 @@ package nppx
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -73,3 +74,40 @@ func appendToFile(filePath, content string) error {
 	_, err = file.WriteString(content + "\n")
 	return err
 }
+
+func CreateSymlinks(jsonFile string) error {
+	file, err := os.Open(jsonFile)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	var symlinkMap map[string]string
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&symlinkMap); err != nil {
+		return err
+	}
+
+	for symlink, target := range symlinkMap {
+		if _, err := os.Stat(setup.CACHE_PATH + target); os.IsNotExist(err) {
+			return fmt.Errorf("Target path %s does not exist", target)
+		}
+
+		err := os.Symlink(setup.CACHE_PATH+target, symlink)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("Symlink created: %s -> %s\n", symlink, target)
+	}
+
+	return nil
+}
+
+//func main() {
+//	jsonFile := "sym.json"
+//	err := createSymlinks(jsonFile)
+//	if err != nil {
+//		fmt.Println("Error:", err)
+//	}
+//}
