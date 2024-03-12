@@ -25,12 +25,12 @@ type Pkg struct {
 func Action(c *cli.Context) error {
 	err := nppx.NoPackageJson()
 	if err != nil {
-		err := nppx.CurrentDirNotEmpty()
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			InitPackageJson()
-		}
+		// err := nppx.CurrentDirNotEmpty()
+		// if err != nil {
+		// fmt.Println(err)
+		// } else {
+		InitPackageJson()
+		// }
 	}
 
 	return nil
@@ -77,6 +77,6 @@ func InitPackageJson() {
 		return
 	}
 
-	fmt.Println("Wrote to " + pwd + "/package.json")
+	fmt.Println("Wrote to " + pwd + "/package.json \n")
 	fmt.Println(string(f))
 }
