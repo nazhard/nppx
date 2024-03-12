@@ -8,6 +8,8 @@ import (
 	"github.com/nazhard/nppx/pkg/cli/cmd/initial"
 )
 
+// This function writes dependencies when user does `nppx i <package>`
+// to the package.json file in the `dependencies` section
 func WriteDeps(newDeps, newDepsVersion string) {
 	fileName := "package.json"
 	existingData, err := os.ReadFile(fileName)
@@ -46,6 +48,8 @@ func WriteDeps(newDeps, newDepsVersion string) {
 	}
 }
 
+// This function writes dependencies when user does `nppx i -D <package>` (using -D flag)
+// to the package.json file in the `devDependencies` section
 func WriteDevDeps(newDeps, newDepsVersion string) {
 	fileName := "package.json"
 	existingData, err := os.ReadFile(fileName)
