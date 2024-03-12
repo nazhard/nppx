@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nazhard/nppx/pkg/cmd/initial"
+	"github.com/nazhard/nppx/pkg/cli/cmd/initial"
 )
 
 func WriteDeps(newDeps, newDepsVersion string) {

@@ -36,28 +36,28 @@ func install(args []string, useDev bool) {
 
 			nppx.WriteEmptyJSON()
 		}
-	}
 
-	if len(args) == 0 {
-		// modules.Search()
-	}
+		if len(args) == 0 {
+			// modules.Search()
+		}
 
-	if len(args) != 0 {
-		dl(args, useDev)
+		if len(args) != 0 {
+			dl(args, useDev)
 
-		/*
-			m := modules.SearchArgs(args)
-			if m == true {
-				dl()
-			}
+			/*
+				m := modules.SearchArgs(args)
+				if m == true {
+					dl()
+				}
 
-			dd()
-		*/
-	}
+				dd()
+			*/
+		}
 
-	err = nppx.CreateSymlinks(".nppx/.modules.json")
-	if err != nil {
-		fmt.Println("Error:", err)
+		err = nppx.CreateSymlinks(".nppx/.modules.json")
+		if err != nil {
+			fmt.Println("Error:", err)
+		}
 	}
 }
 
@@ -95,6 +95,8 @@ func dl(args []string, useDev bool) {
 
 			_ = nppx.ReadDotModules(a)
 			nppx.WriteToModulesJson(a, v)
+
+			nppx.Extract(fileName, module_path, "package")
 
 			if useDev == true {
 				resolver.WriteDevDeps(a, v)

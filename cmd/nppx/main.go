@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/nazhard/nppx/internal/setup"
-	"github.com/nazhard/nppx/pkg/cmd"
+	"github.com/nazhard/nppx/pkg/cli/cmd"
 	"github.com/urfave/cli/v2"
 )
 
