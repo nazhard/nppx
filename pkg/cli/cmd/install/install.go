@@ -97,6 +97,10 @@ func dl(args []string, useDev bool) {
 			nppx.WriteToModulesJson(a, v)
 
 			nppx.Extract(fileName, module_path, "package")
+			err := os.Remove(fileName)
+			if err != nil {
+				fmt.Println(err)
+			}
 
 			if useDev == true {
 				resolver.WriteDevDeps(a, v)
