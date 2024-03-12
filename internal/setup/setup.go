@@ -69,8 +69,7 @@ func createFile(fileName string, wg *sync.WaitGroup) {
 		return
 	}
 	defer file.Close()
-
-	fmt.Printf("File %s created successfully!\n", fileName)
+	//fmt.Printf("File %s created successfully!\n", fileName)
 }
 
 func createDirectory(dirName string, wg *sync.WaitGroup) {
@@ -81,20 +80,5 @@ func createDirectory(dirName string, wg *sync.WaitGroup) {
 		fmt.Printf("Error creating directory %s: %v\n", dirName, err)
 		return
 	}
-
-	fmt.Printf("Directory %s created successfully!\n", dirName)
+	// fmt.Printf("Directory %s created successfully!\n", dirName)
 }
-
-/*
-func writeModule() {
-	path := filepath.Join(NPPX_PATH, ".modules.toml")
-	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	file.WriteString("[modules]\n")
-}
-*/

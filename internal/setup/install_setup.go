@@ -1,7 +1,6 @@
 package setup
 
 import (
-	"fmt"
 	"os"
 	"sync"
 )
@@ -26,8 +25,6 @@ func DotNPPX() {
 	}
 
 	wg.Wait()
-
-	fmt.Println("All files and directories created successfully!")
 }
 
 func CreateDotNPPX() error {
