@@ -6,21 +6,9 @@ import (
 	"os"
 
 	"github.com/nazhard/nppx"
+	"github.com/nazhard/nppx/pkg/resolver"
 	"github.com/urfave/cli/v2"
 )
-
-type Pkg struct {
-	Name            string            `json:"name"`
-	Version         string            `json:"version"`
-	Description     string            `json:"description,omitempty"`
-	Main            string            `json:"main,omitempty"`
-	Scripts         map[string]string `json:"scripts"`
-	Dependencies    map[string]string `json:"dependencies"`
-	DevDependencies map[string]string `json:"devDependencies"`
-	Keywords        []string          `json:"keywords,omitempty"`
-	Author          string            `json:"author,omitempty"`
-	License         string            `json:"license,omitempty"`
-}
 
 func Action(c *cli.Context) error {
 	err := nppx.NoPackageJson()
@@ -38,7 +26,7 @@ func Action(c *cli.Context) error {
 
 func InitPackageJson() {
 	pwd, _ := os.Getwd()
-	pkg := Pkg{
+	pkg := resolver.Pkg{
 		Name:        "",
 		Version:     "0.0.1",
 		Description: "",

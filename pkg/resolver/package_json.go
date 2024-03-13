@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-
-	"github.com/nazhard/nppx/pkg/cli/cmd/initial"
 )
 
 // This function writes dependencies when user does `nppx i <package>`
@@ -19,7 +17,7 @@ func WriteDeps(newDeps, newDepsVersion string) {
 		return
 	}
 
-	var pkgJson initial.Pkg
+	var pkgJson Pkg
 	err = json.Unmarshal(existingData, &pkgJson)
 	if err != nil {
 		fmt.Println("Error unmarshaling JSON:", err)
@@ -31,13 +29,16 @@ func WriteDeps(newDeps, newDepsVersion string) {
 		fmt.Println("Warning: Content already exists.")
 		return
 	}
-	// Append new content
+
 	pkgJson.Dependencies[newDeps] = newDepsVersion
 
-	// Marshal the updated data to JSON
+	pkgJson.MergeDependencies()
+
 	updatedData, err := json.MarshalIndent(pkgJson, "", "  ")
+
+	fmt.Println(string(updatedData))
 	if err != nil {
-		fmt.Println("Error marshaling JSON:", err)
+		fmt.Println("Error marshaling package.json:", err)
 		return
 	}
 
@@ -59,10 +60,10 @@ func WriteDevDeps(newDeps, newDepsVersion string) {
 		return
 	}
 
-	var pkgJson initial.Pkg
+	var pkgJson Pkg
 	err = json.Unmarshal(existingData, &pkgJson)
 	if err != nil {
-		fmt.Println("Error unmarshaling JSON:", err)
+		fmt.Println("Error unmarshaling package.json:", err)
 		return
 	}
 
@@ -74,7 +75,8 @@ func WriteDevDeps(newDeps, newDepsVersion string) {
 	// Append new content
 	pkgJson.DevDependencies[newDeps] = newDepsVersion
 
-	// Marshal the updated data to JSON
+	pkgJson.MergeDevDependencies()
+
 	updatedData, err := json.MarshalIndent(pkgJson, "", "  ")
 	if err != nil {
 		fmt.Println("Error marshaling JSON:", err)
@@ -100,10 +102,10 @@ func ReadPackageJson() (string, string, error) {
 		return "", "", errors.New("Error reading package.json")
 	}
 
-	var pkg initial.Pkg
+	var pkg Pkg
 	err = json.Unmarshal(data, &pkg)
 	if err != nil {
-		return "", "", errors.New("Error unmarshaling JSON:")
+		return "", "", errors.New("Error reading package.nson:")
 	}
 
 	var (
@@ -116,4 +118,24 @@ func ReadPackageJson() (string, string, error) {
 	}
 
 	return a, b, nil
+}
+
+// Check for duplicate modules, then delete them from the `dependencies` section
+func (d *Pkg) MergeDependencies() {
+	for key, value := range d.DevDependencies {
+		if _, ok := d.DevDependencies[key]; ok {
+			delete(d.DevDependencies, key)
+			d.Dependencies[key] = value
+		}
+	}
+}
+
+// Check for duplicate modules, then delete them from the `devDependencies` section
+func (d *Pkg) MergeDevDependencies() {
+	for key, value := range d.Dependencies {
+		if _, ok := d.Dependencies[key]; ok {
+			delete(d.Dependencies, key)
+			d.DevDependencies[key] = value
+		}
+	}
 }

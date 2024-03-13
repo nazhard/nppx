@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/nazhard/nppx"
-	"github.com/nazhard/nppx/internal/fs"
 	"github.com/nazhard/nppx/internal/setup"
+	"github.com/nazhard/nppx/pkg/lockfile"
 	"github.com/urfave/cli/v2"
 )
 
@@ -27,22 +26,21 @@ func install(args []string, useDev bool) {
 		fmt.Println(err)
 	}
 
-	t := time.Since(time.Now())
-
 	if err == nil {
 		_, err := os.Stat(".nppx")
 		if os.IsNotExist(err) {
 			_ = os.Mkdir(".nppx", os.ModePerm)
 			setup.DotNPPX()
 
-			fs.WriteEmptyJSON()
+			//fs.WriteEmptyJSON()
+			lockfile.GenerateLockfile()
 		}
 
 		if len(args) == 0 {
 			name, version, exist := checkCache()
 			if exist == true {
 				installFromCache(name, version)
-				fmt.Printf("Done in %s, Installed from cache \n", t)
+				lockfile.WriteDeps(name, version, false)
 			} else {
 				fmt.Println("BAD")
 			}
@@ -52,17 +50,14 @@ func install(args []string, useDev bool) {
 			name, version, x := checkCacheWithArgs(args)
 			if x == true {
 				installFromCache(name, version)
-				fmt.Printf("Done in %s, Installed from cache \n", t)
+				lockfile.WriteDeps(name, version, false)
 			} else {
 				fmt.Println("BAD")
 				// dl(args, useDev)
 			}
 		}
 
-		err = fs.CreateSymlinks(".nppx/.modules.json")
-		if err != nil {
-			fmt.Println("Error:", err)
-		}
+		// err = fs.CreateSymlinks(".nppx/.modules.json")
 	}
 }
 

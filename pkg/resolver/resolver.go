@@ -19,6 +19,20 @@ type PkgInfo struct {
 	Dist    Dist   `json:"dist"`
 }
 
+// package.json struct
+type Pkg struct {
+	Name            string            `json:"name"`
+	Version         string            `json:"version"`
+	Description     string            `json:"description,omitempty"`
+	Main            string            `json:"main,omitempty"`
+	Scripts         map[string]string `json:"scripts"`
+	Dependencies    map[string]string `json:"dependencies"`
+	DevDependencies map[string]string `json:"devDependencies"`
+	Keywords        []string          `json:"keywords,omitempty"`
+	Author          string            `json:"author,omitempty"`
+	License         string            `json:"license,omitempty"`
+}
+
 var (
 	Name    string
 	Version string

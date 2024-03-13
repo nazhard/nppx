@@ -42,6 +42,4 @@ func checkCacheWithArgs(args []string) (string, string, bool) {
 	return "", "", false
 }
 
-func installFromCache(a, v string) {
-	fs.WriteToModulesJson(a, v)
-}
+func installFromCache(a, v string) {}

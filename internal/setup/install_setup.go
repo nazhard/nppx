@@ -9,8 +9,8 @@ func DotNPPX() {
 	dir1 := ".nppx/modules"
 	dirNames := []string{dir1}
 
-	f1 := ".nppx/.modules.json"
-	fileNames := []string{f1}
+	// f1 := ".nppx/.modules.json"
+	// fileNames := []string{f1}
 
 	var wg sync.WaitGroup
 
@@ -19,10 +19,10 @@ func DotNPPX() {
 		go createDirectory(dirName, &wg)
 	}
 
-	for _, fileName := range fileNames {
-		wg.Add(1)
-		go createFile(fileName, &wg)
-	}
+	// for _, fileName := range fileNames {
+	// wg.Add(1)
+	// go createFile(fileName, &wg)
+	// }
 
 	wg.Wait()
 }
