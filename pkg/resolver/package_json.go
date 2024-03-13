@@ -91,6 +91,8 @@ func WriteDevDeps(newDeps, newDepsVersion string) {
 	fmt.Println("Content appended successfully.")
 }
 
+// This function reads each dependencies.
+// TODO: make it can reads dev, peer, and optional dependencies.
 func ReadPackageJson() (string, string, error) {
 	file := "package.json"
 	data, err := os.ReadFile(file)

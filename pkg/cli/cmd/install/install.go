@@ -49,7 +49,7 @@ func install(args []string, useDev bool) {
 		}
 
 		if len(args) != 0 {
-			name, version, x := checkCache()
+			name, version, x := checkCacheWithArgs(args)
 			if x == true {
 				installFromCache(name, version)
 				fmt.Printf("Done in %s, Installed from cache \n", t)
