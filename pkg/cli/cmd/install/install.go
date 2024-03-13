@@ -39,11 +39,17 @@ func install(args []string, useDev bool) {
 		}
 
 		if len(args) == 0 {
-			// modules.Search()
+			name, version, exist := checkCache()
+			if exist == true {
+				installFromCache(name, version)
+				fmt.Printf("Done in %s, Installed from cache \n", t)
+			} else {
+				fmt.Println("BAD")
+			}
 		}
 
 		if len(args) != 0 {
-			name, version, x := checkCache(args)
+			name, version, x := checkCache()
 			if x == true {
 				installFromCache(name, version)
 				fmt.Printf("Done in %s, Installed from cache \n", t)

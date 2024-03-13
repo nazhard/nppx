@@ -91,7 +91,7 @@ func WriteDevDeps(newDeps, newDepsVersion string) {
 	fmt.Println("Content appended successfully.")
 }
 
-func ReadPackageJson(name string) (string, string, error) {
+func ReadPackageJson() (string, string, error) {
 	file := "package.json"
 	data, err := os.ReadFile(file)
 	if err != nil {
