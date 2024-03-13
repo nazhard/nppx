@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/nazhard/nppx"
+	"github.com/nazhard/nppx/internal/fs"
 	"github.com/nazhard/nppx/internal/setup"
 	"github.com/nazhard/nppx/pkg/resolver"
 )
@@ -35,12 +36,12 @@ func dl(args []string, useDev bool) {
 			_ = os.MkdirAll(module_path, os.ModePerm)
 			nppx.Get(fileName, resolver.Tarball)
 
-			nppx.WriteToDotModules(fmt.Sprintf("%s_%s", a, v))
+			fs.WriteToDotModules(fmt.Sprintf("%s_%s", a, v))
 
 			_ = nppx.ReadDotModules(a)
-			nppx.WriteToModulesJson(a, v)
+			fs.WriteToModulesJson(a, v)
 
-			nppx.Extract(fileName, module_path, "package")
+			nppx.ExtractGz(fileName, module_path, "package")
 			err := os.Remove(fileName)
 			if err != nil {
 				fmt.Println(err)

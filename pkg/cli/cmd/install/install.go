@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/nazhard/nppx"
+	"github.com/nazhard/nppx/internal/fs"
 	"github.com/nazhard/nppx/internal/setup"
 	"github.com/urfave/cli/v2"
 )
@@ -31,7 +32,7 @@ func install(args []string, useDev bool) {
 			_ = os.Mkdir(".nppx", os.ModePerm)
 			setup.DotNPPX()
 
-			nppx.WriteEmptyJSON()
+			fs.WriteEmptyJSON()
 		}
 
 		if len(args) == 0 {
@@ -51,7 +52,7 @@ func install(args []string, useDev bool) {
 			*/
 		}
 
-		err = nppx.CreateSymlinks(".nppx/.modules.json")
+		err = fs.CreateSymlinks(".nppx/.modules.json")
 		if err != nil {
 			fmt.Println("Error:", err)
 		}
