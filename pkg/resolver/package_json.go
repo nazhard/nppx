@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 
@@ -88,4 +89,29 @@ func WriteDevDeps(newDeps, newDepsVersion string) {
 	}
 
 	fmt.Println("Content appended successfully.")
+}
+
+func ReadPackageJson(name string) (string, string, error) {
+	file := "package.json"
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return "", "", errors.New("Error reading package.json")
+	}
+
+	var pkg initial.Pkg
+	err = json.Unmarshal(data, &pkg)
+	if err != nil {
+		return "", "", errors.New("Error unmarshaling JSON:")
+	}
+
+	var (
+		a string
+		b string
+	)
+
+	for i, c := range pkg.Dependencies {
+		a, b = i, c
+	}
+
+	return a, b, nil
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/nazhard/nppx"
 	"github.com/nazhard/nppx/internal/fs"
@@ -26,6 +27,8 @@ func install(args []string, useDev bool) {
 		fmt.Println(err)
 	}
 
+	t := time.Since(time.Now())
+
 	if err == nil {
 		_, err := os.Stat(".nppx")
 		if os.IsNotExist(err) {
@@ -40,16 +43,14 @@ func install(args []string, useDev bool) {
 		}
 
 		if len(args) != 0 {
-			dl(args, useDev)
-
-			/*
-				m := modules.SearchArgs(args)
-				if m == true {
-					dl()
-				}
-
-				dd()
-			*/
+			name, version, x := checkCache(args)
+			if x == true {
+				installFromCache(name, version)
+				fmt.Printf("Done in %s, Installed from cache \n", t)
+			} else {
+				fmt.Println("BAD")
+				// dl(args, useDev)
+			}
 		}
 
 		err = fs.CreateSymlinks(".nppx/.modules.json")

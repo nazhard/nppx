@@ -31,3 +31,20 @@ func WriteToDotModules(c string) {
 
 	fmt.Println("Content added successfully.")
 }
+
+func ReadDotModules(c string) bool {
+	filePath := filepath.Join(setup.NPPX_PATH, ".modules.txt")
+
+	// Read existing content
+	content, err := readExistingContent(filePath)
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+	}
+
+	// Check if new content already exists
+	if contains(content, c) {
+		return true
+	}
+
+	return false
+}

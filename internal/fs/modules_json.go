@@ -31,7 +31,7 @@ func CreateSymlinks(jsonFile string) error {
 			continue
 		}
 
-		fmt.Printf("Symlink created: %s -> %s\n", symlink, target)
+		//fmt.Printf("Symlink created: %s -> %s\n", symlink, target)
 	}
 
 	return nil
