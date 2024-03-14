@@ -12,6 +12,17 @@ import (
 )
 
 func Action(c *cli.Context) error {
+	// Checking some necessary dirs and files
+	_, err := os.Stat(".nppx")
+	if os.IsNotExist(err) {
+		_ = os.Mkdir(".nppx", os.ModePerm)
+		setup.DotNPPX()
+	}
+	_, err = os.Stat("nppx-lock.json")
+	if os.IsNotExist(err) {
+		lockfile.GenerateLockfile()
+	}
+
 	if c.Bool("dev") {
 		install(c.Args().Slice(), "dev")
 	} else if c.Bool("prod") {
@@ -29,15 +40,6 @@ func install(args []string, action string) {
 	}
 
 	if err == nil {
-		_, err := os.Stat(".nppx")
-		if os.IsNotExist(err) {
-			_ = os.Mkdir(".nppx", os.ModePerm)
-			setup.DotNPPX()
-
-			//fs.WriteEmptyJSON()
-			lockfile.GenerateLockfile()
-		}
-
 		if len(args) == 0 {
 			name, version, exist := checkCache()
 			if exist == true {

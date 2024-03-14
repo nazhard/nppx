@@ -1,7 +1,9 @@
 {
   "name": "test-nppx",
   "version": "v0.0.5",
-  "description": "",
+  "scripts" : {
+    "dev": "vite dev"
+  },
   "dependencies": {
     "solid-js": "1.8.15"
   },

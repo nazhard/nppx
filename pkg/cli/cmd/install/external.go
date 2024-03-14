@@ -36,6 +36,7 @@ func fetch(a string) (string, string) {
 	name, version, b := contains(a, "@", "/")
 	if b == true {
 		resolver.GetInfo(name, version)
+		name, version := resolver.Name, resolver.Version
 		return name, version
 	} else {
 		resolver.GetInfo(a, "latest")
@@ -53,7 +54,7 @@ func ioStuff(name, version string) {
 
 	fs.WriteToDotModules(fmt.Sprintf("%s_%s", name, version))
 
-	_ = nppx.ReadDotModules(name)
+	// _ = nppx.ReadDotModules(name)
 
 	nppx.ExtractGz(fileName, module_path, "package")
 	err := os.Remove(fileName)
@@ -72,6 +73,7 @@ func getDef(args []string) {
 
 			name, version := fetch(a)
 			ioStuff(name, version)
+			resolver.WriteDeps(name, version)
 			lockfile.WriteDeps(name, version, false)
 		}(arg)
 	}
@@ -89,6 +91,7 @@ func getDev(args []string) {
 
 			name, version := fetch(a)
 			ioStuff(name, version)
+			resolver.WriteDevDeps(name, version)
 			lockfile.WriteDeps(name, version, true)
 		}(arg)
 	}
