@@ -12,15 +12,17 @@ import (
 )
 
 func Action(c *cli.Context) error {
-	if c.Bool("D") == true {
-		install(c.Args().Slice(), true)
+	if c.Bool("dev") {
+		install(c.Args().Slice(), "dev")
+	} else if c.Bool("prod") {
+		install(c.Args().Slice(), "prod")
 	} else {
-		install(c.Args().Slice(), false)
+		install(c.Args().Slice(), "def")
 	}
 	return nil
 }
 
-func install(args []string, useDev bool) {
+func install(args []string, action string) {
 	err := nppx.NoPackageJson()
 	if err != nil {
 		fmt.Println(err)
@@ -42,7 +44,7 @@ func install(args []string, useDev bool) {
 				installFromCache(name, version)
 				lockfile.WriteDeps(name, version, false)
 			} else {
-				fmt.Println("BAD")
+				do(args, action, false)
 			}
 		}
 
@@ -52,8 +54,7 @@ func install(args []string, useDev bool) {
 				installFromCache(name, version)
 				lockfile.WriteDeps(name, version, false)
 			} else {
-				fmt.Println("BAD")
-				// dl(args, useDev)
+				do(args, action, true)
 			}
 		}
 

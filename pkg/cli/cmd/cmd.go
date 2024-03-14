@@ -3,45 +3,60 @@ package cmd
 import (
 	"github.com/nazhard/nppx/pkg/cli/cmd/initial"
 	"github.com/nazhard/nppx/pkg/cli/cmd/install"
-	"github.com/nazhard/nppx/pkg/cli/cmd/list"
 	"github.com/urfave/cli/v2"
 )
 
 func Commands() []*cli.Command {
 	cmds := []*cli.Command{
 		{
-			Name:   "init",
-			Usage:  "initialize simple project",
-			Action: initial.Action,
-		},
-		{
-			Name:    "install",
-			Aliases: []string{"i"},
-			Usage:   "install global packages",
+			Name:      "install",
+			Aliases:   []string{"i"},
+			Usage:     "Install all dependencies when no args given.",
+			UsageText: "nppx i, nppx i <pkg>",
 			Flags: []cli.Flag{
 				&cli.BoolFlag{
-					Name:  "D",
-					Usage: "write to devDependencies",
+					Name:    "dev",
+					Aliases: []string{"D"},
+					Usage:   "Install devDependencies",
+				},
+				&cli.BoolFlag{
+					Name:    "prod",
+					Aliases: []string{"P"},
+					Usage:   "Packages in devDependencies won't be installed",
 				},
 			},
-			Action: install.Action,
+			Category: "\n  Manage your dependencies",
+			Action:   install.Action,
 		},
 		{
-			Name:      "list",
-			Aliases:   []string{"ls"},
-			Usage:     "list installed packages",
-			UsageText: "nppx list, nppx ls",
-			Action: func(c *cli.Context) error {
-				list.Print()
-
-				return nil
+			Name:    "update",
+			Aliases: []string{"up"},
+			Usage:   "Update all dependencies",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:  "g",
+					Usage: "Update everything",
+				},
 			},
+			Category: "\n  Manage your dependencies",
 		},
 		{
-			Name:      "check",
-			Aliases:   []string{"ch"},
-			Usage:     "check installed packages",
-			UsageText: "nppx check <package>",
+			Name:    "remove",
+			Aliases: []string{"rm"},
+			Usage:   "Removes packages from the project's package.json",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:  "g",
+					Usage: "Remove dependencies from entire system",
+				},
+			},
+			Category: "\n  Manage your dependencies",
+		},
+		{
+			Name:     "init",
+			Usage:    "Initialize simple package.json",
+			Action:   initial.Action,
+			Category: "\n  Others",
 		},
 	}
 
