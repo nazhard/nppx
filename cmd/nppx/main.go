@@ -9,6 +9,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var visibleCommandTemplate = `{{ $cv := offsetCommands .VisibleCommands 5}}{{range .VisibleCommands}}
+   {{$s := join .Names ", "}}{{$s}}{{ $sp := subtract $cv (offset $s 3) }}{{ indent $sp ""}}{{wrap .Usage $cv}}{{end}}`
+
 func main() {
 	s := setup.InitFunc()
 
@@ -25,6 +28,18 @@ func exec() {
 		Commands:        cmd.Commands(),
 		HideHelpCommand: true,
 		Suggest:         true,
+		CustomAppHelpTemplate: `{{.Name}}{{if .Version}} {{.Version}}{{end}}
+
+Usage: {{.HelpName}}{{if .Commands}} command{{end}}{{if .VisibleFlags}} [flags]{{end}}{{if .ArgsUsage}} {{.ArgsUsage}}{{else}}{{end}}
+{{if .Commands}}
+Commands: {{range .VisibleCategories}}{{if .Name}}
+   {{.Name}}:{{range .VisibleCommands}}
+     {{join .Names ", "}}{{"\t"}}{{.Usage}}{{end}}{{else}}{{template "visibleCommandTemplate" .}}{{end}}{{end}}
+
+Flags:
+   {{range .VisibleFlags}}{{.}}
+   {{end}}{{end}}
+`,
 	}
 
 	err := app.Run(os.Args)

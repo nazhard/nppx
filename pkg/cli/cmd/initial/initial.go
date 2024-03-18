@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nazhard/nppx"
+	"github.com/nazhard/nppx/internal/check"
 	"github.com/nazhard/nppx/pkg/resolver"
 	"github.com/urfave/cli/v2"
 )
 
 func Action(c *cli.Context) error {
-	err := nppx.NoPackageJson()
+	err := check.NoPackageJson()
 	if err != nil {
 		// err := nppx.CurrentDirNotEmpty()
 		// if err != nil {

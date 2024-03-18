@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nazhard/nppx"
+	"github.com/nazhard/nppx/internal/check"
 	"github.com/nazhard/nppx/internal/setup"
 	"github.com/nazhard/nppx/pkg/lockfile"
 	"github.com/urfave/cli/v2"
@@ -34,17 +34,17 @@ func Action(c *cli.Context) error {
 }
 
 func install(args []string, action string) {
-	err := nppx.NoPackageJson()
+	err := check.NoPackageJson()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	if err == nil {
 		if len(args) == 0 {
 			name, version, exist := checkCache()
 			if exist == true {
-				installFromCache(name, version)
-				lockfile.WriteDeps(name, version, false)
+				installFromCache(name, version, action)
 			} else {
 				do(args, action, false)
 			}
@@ -53,8 +53,7 @@ func install(args []string, action string) {
 		if len(args) != 0 {
 			name, version, x := checkCacheWithArgs(args)
 			if x == true {
-				installFromCache(name, version)
-				lockfile.WriteDeps(name, version, false)
+				installFromCache(name, version, action)
 			} else {
 				do(args, action, true)
 			}
