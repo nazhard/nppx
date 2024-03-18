@@ -10,7 +10,7 @@ import (
 )
 
 var visibleCommandTemplate = `{{ $cv := offsetCommands .VisibleCommands 5}}{{range .VisibleCommands}}
-   {{$s := join .Names ", "}}{{$s}}{{ $sp := subtract $cv (offset $s 3) }}{{ indent $sp ""}}{{wrap .Usage $cv}}{{end}}`
+   {{$s := join .Names ", "}}{{$s}}{{ $sp := subtract $cv (offset $s 3) }}{{ indent $sp ""}}{{wrap .UsageText $cv}}{{end}}`
 
 func main() {
 	s := setup.InitFunc()
@@ -34,7 +34,7 @@ Usage: {{.HelpName}}{{if .Commands}} command{{end}}{{if .VisibleFlags}} [flags]{
 {{if .Commands}}
 Commands: {{range .VisibleCategories}}{{if .Name}}
    {{.Name}}:{{range .VisibleCommands}}
-     {{join .Names ", "}}{{"\t"}}{{.Usage}}{{end}}{{else}}{{template "visibleCommandTemplate" .}}{{end}}{{end}}
+     {{join .Names ", "}}{{"\t"}}{{.UsageText}}{{end}}{{else}}{{template "visibleCommandTemplate" .}}{{end}}{{end}}
 
 Flags:
    {{range .VisibleFlags}}{{.}}

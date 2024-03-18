@@ -6,11 +6,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var help = `Usage: {{.HelpName}} {{if .Usage}}{{.Usage}} {{end}}[options]
+var help = `Usage: {{.HelpName}} {{if .Usage}}{{.Usage}}{{end}}[options]
 {{if .Aliases}}
 Alias: {{range .Aliases}}{{.}}{{end}}
 {{end}}
-{{.UsageText}}
+{{.Description}}
 
 Options:
 	{{range .Flags}}{{.}}
@@ -19,12 +19,12 @@ Options:
 func Commands() []*cli.Command {
 	cmds := []*cli.Command{
 		{
-			Name:      "install",
-			Aliases:   []string{"i"},
-			Usage:     "Install all dependencies for a project",
-			UsageText: "Installs all dependencies of the project in the current working directory.",
-			Category:  "\n  Manage your dependencies",
-			Action:    install.Action,
+			Name:        "install",
+			Aliases:     []string{"i"},
+			Description: "Installs all dependencies of the project in the current working directory.",
+			UsageText:   "Install all dependencies for a project",
+			Category:    "\n  Manage your dependencies",
+			Action:      install.Action,
 			Flags: []cli.Flag{
 				&cli.BoolFlag{
 					Name:    "dev",
@@ -40,11 +40,11 @@ func Commands() []*cli.Command {
 			CustomHelpTemplate: help,
 		},
 		{
-			Name:      "update",
-			Aliases:   []string{"up"},
-			Usage:     "Upadate all dependencies",
-			UsageText: "Update all dependencies",
-			Category:  "\n  Manage your dependencies",
+			Name:        "update",
+			Aliases:     []string{"up"},
+			Description: "Upadate all dependencies",
+			UsageText:   "Update all dependencies",
+			Category:    "\n  Manage your dependencies",
 			Flags: []cli.Flag{
 				&cli.BoolFlag{
 					Name:  "g",
@@ -54,11 +54,11 @@ func Commands() []*cli.Command {
 			CustomHelpTemplate: help,
 		},
 		{
-			Name:      "remove",
-			Aliases:   []string{"rm"},
-			Usage:     "Removes packages from the project's package.json",
-			UsageText: "Removes packages from the project's package.json",
-			Category:  "\n  Manage your dependencies",
+			Name:        "remove",
+			Aliases:     []string{"rm"},
+			Description: "Removes packages from the project's package.json",
+			UsageText:   "Removes packages from the project's package.json",
+			Category:    "\n  Manage your dependencies",
 			Flags: []cli.Flag{
 				&cli.BoolFlag{
 					Name:  "g",
@@ -69,7 +69,7 @@ func Commands() []*cli.Command {
 		},
 		{
 			Name:               "init",
-			Usage:              "Initialize simple package.json",
+			Description:        "Initialize simple package.json",
 			UsageText:          "Initialize simple package.json",
 			Action:             initial.Action,
 			Category:           "\n  Others",
