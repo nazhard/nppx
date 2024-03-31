@@ -2,34 +2,14 @@ package setup
 
 import (
 	"os"
-	"sync"
 )
 
-func DotNPPX() {
-	dir1 := ".nppx/modules"
-	dirNames := []string{dir1}
-
-	// f1 := ".nppx/.modules.json"
-	// fileNames := []string{f1}
-
-	var wg sync.WaitGroup
-
-	for _, dirName := range dirNames {
-		wg.Add(1)
-		go createDirectory(dirName, &wg)
+func CreateDotNPPXDir() error {
+	if err := os.MkdirAll(".nppx", os.ModePerm); err != nil {
+		return err
 	}
 
-	// for _, fileName := range fileNames {
-	// wg.Add(1)
-	// go createFile(fileName, &wg)
-	// }
-
-	wg.Wait()
-}
-
-func CreateDotNPPX() error {
-	err := os.MkdirAll(".nppx", os.ModePerm)
-	if err != nil {
+	if err := os.MkdirAll(".nppx/modules", os.ModePerm); err != nil {
 		return err
 	}
 

@@ -8,9 +8,9 @@ import (
 
 	"github.com/nazhard/nppx"
 	"github.com/nazhard/nppx/internal/fs"
+	"github.com/nazhard/nppx/internal/lockfile"
+	"github.com/nazhard/nppx/internal/resolver"
 	"github.com/nazhard/nppx/internal/setup"
-	"github.com/nazhard/nppx/pkg/lockfile"
-	"github.com/nazhard/nppx/pkg/resolver"
 )
 
 func do(args []string, action string, have bool) {
@@ -28,34 +28,38 @@ func do(args []string, action string, have bool) {
 
 func fetch(a string) (string, string) {
 	name, version, b := contains(a, "@", "/")
-	if b == true {
-		resolver.GetInfo(name, version)
-		name, version := resolver.Name, resolver.Version
-		return name, version
+	if b {
+		resolver.PkgInfo(name, version)
 	} else {
-		resolver.GetInfo(a, "latest")
-		name, version := resolver.Name, resolver.Version
-		return name, version
+		resolver.PkgInfo(a, "latest")
 	}
+	return resolver.Name, resolver.Version
 }
 
 func ioStuff(name, version string) {
-	module_path := filepath.Join(setup.CACHE_PATH, name, version)
-	node_modules := filepath.Join(module_path, "node_modules")
-	fileName := module_path + "/" + name + "-" + version + ".tgz"
+	modulePath := filepath.Join(setup.NPPX_Cache, name, version)
+	nodeModules := filepath.Join(modulePath, "node_modules")
+	fileName := filepath.Join(modulePath, fmt.Sprintf("%s-%s.tgz", name, version))
 
-	_ = os.MkdirAll(module_path, os.ModePerm)
-	_ = os.MkdirAll(node_modules, os.ModePerm)
-	nppx.Get(fileName, resolver.Tarball)
-
-	fs.WriteToDotModules(fmt.Sprintf("%s_%s", name, version))
-
-	// _ = nppx.ReadDotModules(name)
-
-	nppx.ExtractGz(fileName, node_modules, "package")
-	err := os.Remove(fileName)
+	err := os.MkdirAll(modulePath, os.ModePerm)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error creating directory:", err)
+		return
+	}
+
+	err = os.MkdirAll(nodeModules, os.ModePerm)
+	if err != nil {
+		fmt.Println("Error creating directory:", err)
+		return
+	}
+
+	nppx.Get(fileName, resolver.Tarball)
+	fs.WriteToDotModules(fmt.Sprintf("%s_%s", name, version))
+	nppx.ExtractGz(fileName, nodeModules, "package")
+
+	err = os.Remove(fileName)
+	if err != nil {
+		fmt.Println("Error removing file:", err)
 	}
 }
 
@@ -69,7 +73,7 @@ func getDef(args []string) {
 
 			name, version := fetch(a)
 			ioStuff(name, version)
-			resolver.WriteDeps(name, version)
+			resolver.WriteDependencies(name, version, false)
 			lockfile.WriteDeps(name, version, false)
 		}(arg)
 	}
@@ -87,7 +91,7 @@ func getDev(args []string) {
 
 			name, version := fetch(a)
 			ioStuff(name, version)
-			resolver.WriteDevDeps(name, version)
+			resolver.WriteDependencies(name, version, true)
 			lockfile.WriteDeps(name, version, true)
 		}(arg)
 	}
@@ -98,25 +102,18 @@ func getDev(args []string) {
 func cleanInstall() {
 	var wg sync.WaitGroup
 
-	n, v, err := resolver.ReadDeps()
+	n, v, err := resolver.ReadPackageJson()
 	if err != nil {
-		fmt.Println(err)
-	}
-	dN, dV, err := resolver.ReadDevDeps()
-	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error reading dependencies:", err)
 	}
 
-	resolver.GetInfo(n, v)
-	resolver.GetInfo(dN, dV)
+	resolver.PkgInfo(n, v)
 
 	ioStuff(n, v)
-	ioStuff(dN, dV)
 
 	lockfile.WriteDeps(n, v, false)
-	lockfile.WriteDeps(dN, dV, true)
 
-	fmt.Println(n, v, dN, dV)
+	fmt.Println(n, v)
 
 	wg.Wait()
 }

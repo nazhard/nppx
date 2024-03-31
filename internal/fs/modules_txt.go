@@ -8,7 +8,7 @@ import (
 )
 
 func WriteToDotModules(c string) {
-	filePath := filepath.Join(setup.NPPX_PATH, ".modules.txt")
+	filePath := filepath.Join(setup.NPPX_Cache, ".modules.txt")
 
 	// Read existing content
 	existingContent, err := readExistingContent(filePath)
@@ -33,7 +33,7 @@ func WriteToDotModules(c string) {
 }
 
 func ReadDotModules(c string) bool {
-	filePath := filepath.Join(setup.NPPX_PATH, ".modules.txt")
+	filePath := filepath.Join(setup.NPPX_Cache, ".modules.txt")
 
 	// Read existing content
 	content, err := readExistingContent(filePath)

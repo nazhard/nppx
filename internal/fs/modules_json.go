@@ -22,11 +22,11 @@ func CreateSymlinks(jsonFile string) error {
 	}
 
 	for symlink, target := range symlinkMap {
-		if _, err := os.Stat(setup.CACHE_PATH + target); os.IsNotExist(err) {
+		if _, err := os.Stat(setup.NPPX_Cache + target); os.IsNotExist(err) {
 			return fmt.Errorf("Target path %s does not exist", target)
 		}
 
-		err := os.Symlink(setup.CACHE_PATH+target, ".nppx/modules/"+symlink)
+		err := os.Symlink(setup.NPPX_Cache+target, ".nppx/modules/"+symlink)
 		if err != nil {
 			continue
 		}

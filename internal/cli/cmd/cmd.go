@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/nazhard/nppx/pkg/cli/cmd/initial"
-	"github.com/nazhard/nppx/pkg/cli/cmd/install"
+	"github.com/nazhard/nppx/internal/cli/cmd/initial"
+	"github.com/nazhard/nppx/internal/cli/cmd/install"
 	"github.com/urfave/cli/v2"
 )
 

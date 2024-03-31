@@ -4,32 +4,32 @@ import (
 	"fmt"
 
 	"github.com/nazhard/nppx/internal/fs"
-	"github.com/nazhard/nppx/pkg/lockfile"
-	"github.com/nazhard/nppx/pkg/resolver"
+	"github.com/nazhard/nppx/internal/lockfile"
+	"github.com/nazhard/nppx/internal/resolver"
 )
 
 var ax string
 
 func checkCache() (string, string, bool) {
-	name, version, err := resolver.ReadDeps()
+	name, version, err := resolver.ReadPackageJson()
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	ax = name + "_" + version
-	cacheExist := fs.ReadDotModulesIsExist(ax)
+	cacheExist := fs.ReadDotModules(ax)
 	if cacheExist == true {
 		return name, version, true
 	}
 
 	if cacheExist == false {
-		name, version, err := resolver.ReadDevDeps()
+		name, version, err := resolver.ReadPackageJson()
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		dx := name + "_" + version
-		isCacheExist := fs.ReadDotModulesIsExist(dx)
+		isCacheExist := fs.ReadDotModules(dx)
 		if isCacheExist == true {
 			return name, version, true
 		}
@@ -45,25 +45,25 @@ func checkCacheWithArgs(args []string) (string, string, bool) {
 		if b == true {
 			ax = name + "_" + version
 		} else {
-			resolver.GetInfo(arg, "latest")
+			resolver.PkgInfo(arg, "latest")
 		}
 
-		cacheExist := fs.ReadDotModulesIsExist(ax)
+		cacheExist := fs.ReadDotModules(ax)
 		if cacheExist == true {
-			resolver.WriteDeps(name, version)
+			resolver.WriteDependencies(name, version, false)
 			return name, version, true
 		}
 
 		if cacheExist == false {
-			name, version, err := resolver.ReadDevDeps()
+			name, version, err := resolver.ReadPackageJson()
 			if err != nil {
 				fmt.Println(err)
 			}
 
 			dx := name + "_" + version
-			isCacheExist := fs.ReadDotModulesIsExist(dx)
+			isCacheExist := fs.ReadDotModules(dx)
 			if isCacheExist {
-				resolver.WriteDevDeps(name, version)
+				resolver.WriteDependencies(name, version, true)
 				return name, version, true
 			}
 		}

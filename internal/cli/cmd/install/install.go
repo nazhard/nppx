@@ -5,9 +5,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nazhard/nppx/internal/check"
+	"github.com/nazhard/nppx/internal/lockfile"
 	"github.com/nazhard/nppx/internal/setup"
-	"github.com/nazhard/nppx/pkg/lockfile"
+	"github.com/nazhard/nppx/internal/utils/check"
 	"github.com/urfave/cli/v2"
 )
 
@@ -16,7 +16,7 @@ func Action(c *cli.Context) error {
 	_, err := os.Stat(".nppx")
 	if os.IsNotExist(err) {
 		_ = os.Mkdir(".nppx", os.ModePerm)
-		setup.DotNPPX()
+		setup.CreateDotNPPXDir()
 	}
 	_, err = os.Stat("nppx-lock.json")
 	if os.IsNotExist(err) {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/nazhard/nppx/internal/cli/cmd"
 	"github.com/nazhard/nppx/internal/setup"
-	"github.com/nazhard/nppx/pkg/cli/cmd"
 	"github.com/urfave/cli/v2"
 )
 
@@ -13,7 +13,7 @@ var visibleCommandTemplate = `{{ $cv := offsetCommands .VisibleCommands 5}}{{ran
    {{$s := join .Names ", "}}{{$s}}{{ $sp := subtract $cv (offset $s 3) }}{{ indent $sp ""}}{{wrap .UsageText $cv}}{{end}}`
 
 func main() {
-	s := setup.InitFunc()
+	s := setup.IsNeeded()
 
 	if s == true {
 		exec()
